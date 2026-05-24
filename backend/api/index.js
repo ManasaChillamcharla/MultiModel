@@ -21,6 +21,11 @@ app.get('/', (req, res) => {
     res.send('Multimodal Document Analyzer API is running.');
 });
 
+// Handle favicon.ico requests gracefully to prevent 404 errors in browser logs
+app.get('/favicon.ico', (req, res) => {
+    res.status(204).end();
+});
+
 // Error handling middleware
 app.use((err, req, res, next) => {
     console.error(err.stack);
