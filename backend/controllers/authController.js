@@ -1,5 +1,6 @@
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
+const mongoose = require('mongoose');
 
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET || 'multimodel_jwt_secret_2024', {
@@ -10,6 +11,10 @@ const generateToken = (id) => {
 // POST /api/auth/register
 exports.register = async (req, res) => {
   try {
+    if (mongoose.connection.readyState !== 1) {
+      return res.status(503).json({ error: 'Database connection is not established. Please check if MONGO_URL/MONGO_URI is set in Vercel and that Vercel IPs are whitelisted (0.0.0.0/0) in MongoDB Atlas Network Access.' });
+    }
+
     const { name, email, password } = req.body;
 
     if (!name || !email || !password)
@@ -38,6 +43,10 @@ exports.register = async (req, res) => {
 // POST /api/auth/login
 exports.login = async (req, res) => {
   try {
+    if (mongoose.connection.readyState !== 1) {
+      return res.status(503).json({ error: 'Database connection is not established. Please check if MONGO_URL/MONGO_URI is set in Vercel and that Vercel IPs are whitelisted (0.0.0.0/0) in MongoDB Atlas Network Access.' });
+    }
+
     const { email, password } = req.body;
 
     if (!email || !password)
@@ -66,6 +75,10 @@ exports.login = async (req, res) => {
 // GET /api/auth/me  (protected)
 exports.getMe = async (req, res) => {
   try {
+    if (mongoose.connection.readyState !== 1) {
+      return res.status(503).json({ error: 'Database connection is not established. Please check if MONGO_URL/MONGO_URI is set in Vercel and that Vercel IPs are whitelisted (0.0.0.0/0) in MongoDB Atlas Network Access.' });
+    }
+
     const user = await User.findById(req.user.id).select('-password');
     res.status(200).json(user);
   } catch (err) {

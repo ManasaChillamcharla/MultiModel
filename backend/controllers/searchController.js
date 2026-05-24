@@ -1,8 +1,13 @@
 const Document = require('../models/Document');
 const aiService = require('../services/aiService');
+const mongoose = require('mongoose');
 
 exports.semanticSearch = async (req, res) => {
   try {
+    if (mongoose.connection.readyState !== 1) {
+      return res.status(503).json({ error: 'Database connection is not established. Please check if MONGO_URL/MONGO_URI is set in Vercel and that Vercel IPs are whitelisted (0.0.0.0/0) in MongoDB Atlas Network Access.' });
+    }
+
     const { query } = req.body;
     if (!query) {
       return res.status(400).json({ error: 'Query is required' });
