@@ -4,6 +4,7 @@ const mammoth = require('mammoth');
 const xlsx = require('xlsx');
 const csv = require('csv-parser');
 const Tesseract = require('tesseract.js');
+const os = require('os');
 
 const parsePDF = async (filePath) => {
   const dataBuffer = fs.readFileSync(filePath);
@@ -39,7 +40,9 @@ const parseCSV = (filePath) => {
 };
 
 const parseImage = async (filePath) => {
-  const { data: { text } } = await Tesseract.recognize(filePath, 'eng');
+  const { data: { text } } = await Tesseract.recognize(filePath, 'eng', {
+    cachePath: os.tmpdir()
+  });
   return text;
 };
 

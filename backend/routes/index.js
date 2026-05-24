@@ -3,9 +3,11 @@ const router = express.Router();
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
+const os = require('os');
 
 // ── File upload config ─────────────────────────────────────────────────────────
-const uploadDir = path.join(__dirname, '../uploads');
+// On Vercel, the filesystem is read-only. We must write temporary uploads to the OS temp directory.
+const uploadDir = process.env.VERCEL ? os.tmpdir() : path.join(__dirname, '../uploads');
 if (!fs.existsSync(uploadDir)) {
     fs.mkdirSync(uploadDir, { recursive: true });
 }
