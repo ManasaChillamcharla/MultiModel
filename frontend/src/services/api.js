@@ -1,7 +1,23 @@
 import axios from 'axios';
 
+const rawBaseURL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+
+// Normalize URL to prevent double slashes in the path (e.g. domain.com//api -> domain.com/api)
+let normalizedBaseURL = rawBaseURL;
+if (normalizedBaseURL.includes('://')) {
+  const parts = normalizedBaseURL.split('://');
+  const protocol = parts[0];
+  const rest = parts[1].replace(/\/+/g, '/'); // replace multiple slashes with a single slash
+  normalizedBaseURL = `${protocol}://${rest}`;
+} else {
+  normalizedBaseURL = normalizedBaseURL.replace(/\/+/g, '/');
+}
+
+// Remove any trailing slash to ensure consistency
+normalizedBaseURL = normalizedBaseURL.replace(/\/+$/, '');
+
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5000/api',
+  baseURL: normalizedBaseURL,
 });
 
 // Automatically attach JWT token to every request
